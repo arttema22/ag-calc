@@ -5,7 +5,7 @@
 (function ($) {
     'use strict';
 
-    const FKAdmin = {
+    const AGAdmin = {
 
         init: function () {
             this.bindEvents();
@@ -13,22 +13,22 @@
         },
 
         bindEvents: function () {
-            $('#fk-add-field').on('click', this.addField.bind(this));
-            $(document).on('click', '.fk-remove-field', this.removeField.bind(this));
-            $(document).on('change', '.fk-field-type', this.changeFieldType.bind(this));
-            $(document).on('click', '.fk-add-pricing-row', this.addPricingRow.bind(this));
-            $(document).on('click', '.fk-remove-pricing-row', this.removePricingRow.bind(this));
-            $(document).on('click', '.fk-variable-tag', this.insertVariable.bind(this));
-            $(document).on('click', '.fk-operator-tag', this.insertOperator.bind(this));
-            $('#fk-test-formula').on('click', this.testFormula.bind(this));
-            $(document).on('input change', '.fk-field-row input, .fk-field-row select',
+            $('#ag-add-field').on('click', this.addField.bind(this));
+            $(document).on('click', '.ag-remove-field', this.removeField.bind(this));
+            $(document).on('change', '.ag-field-type', this.changeFieldType.bind(this));
+            $(document).on('click', '.ag-add-pricing-row', this.addPricingRow.bind(this));
+            $(document).on('click', '.ag-remove-pricing-row', this.removePricingRow.bind(this));
+            $(document).on('click', '.ag-variable-tag', this.insertVariable.bind(this));
+            $(document).on('click', '.ag-operator-tag', this.insertOperator.bind(this));
+            $('#ag-test-formula').on('click', this.testFormula.bind(this));
+            $(document).on('input change', '.ag-field-row input, .ag-field-row select',
                 this.updateFieldsData.bind(this));
         },
 
         initSortable: function () {
-            $('.fk-fields-list').sortable({
-                handle: '.fk-field-handle',
-                placeholder: 'fk-field-placeholder',
+            $('.ag-fields-list').sortable({
+                handle: '.ag-field-handle',
+                placeholder: 'ag-field-placeholder',
                 update: this.updateFieldsData.bind(this)
             });
         },
@@ -36,85 +36,85 @@
         addField: function (e) {
             e.preventDefault();
 
-            const fieldType = $('#fk-new-field-type').val();
+            const fieldType = $('#ag-new-field-type').val();
             if (!fieldType) {
-                alert(fk_admin.i18n.select_type);
+                alert(ag_admin.i18n.select_type);
                 return;
             }
 
-            const index = $('.fk-field-row').length;
-            const fieldConfig = fk_admin.fields_registry[fieldType];
+            const index = $('.ag-field-row').length;
+            const fieldConfig = ag_admin.fields_registry[fieldType];
 
             const rowHtml = `
-                <div class="fk-field-row" data-index="${index}">
-                    <div class="fk-field-header">
-                        <span class="fk-field-handle dashicons dashicons-menu"></span>
+                <div class="ag-field-row" data-index="${index}">
+                    <div class="ag-field-header">
+                        <span class="ag-field-handle dashicons dashicons-menu"></span>
                         <strong>${fieldConfig.label}</strong>
-                        <span class="fk-field-type-badge">${fieldConfig.label}</span>
-                        <button type="button" class="fk-remove-field button-link-delete">
+                        <span class="ag-field-type-badge">${fieldConfig.label}</span>
+                        <button type="button" class="ag-remove-field button-link-delete">
                             <span class="dashicons dashicons-trash"></span>
                         </button>
                     </div>
-                    <div class="fk-field-settings">
-                        <div class="fk-field-setting">
-                            <label>${fk_admin.i18n.field_key}</label>
-                            <input type="text" name="fk_field_key[${index}]" 
-                                   value="field_${index}" class="fk-field-key" required>
+                    <div class="ag-field-settings">
+                        <div class="ag-field-setting">
+                            <label>${ag_admin.i18n.field_key}</label>
+                            <input type="text" name="ag_field_key[${index}]" 
+                                   value="field_${index}" class="ag-field-key" required>
                         </div>
-                        <div class="fk-field-setting">
-                            <label>${fk_admin.i18n.field_label}</label>
-                            <input type="text" name="fk_field_label[${index}]" 
-                                   value="${fieldConfig.label}" class="fk-field-label">
+                        <div class="ag-field-setting">
+                            <label>${ag_admin.i18n.field_label}</label>
+                            <input type="text" name="ag_field_label[${index}]" 
+                                   value="${fieldConfig.label}" class="ag-field-label">
                         </div>
-                        <div class="fk-field-setting">
-                            <label>${fk_admin.i18n.field_type}</label>
-                            <select name="fk_field_type[${index}]" class="fk-field-type">
+                        <div class="ag-field-setting">
+                            <label>${ag_admin.i18n.field_type}</label>
+                            <select name="ag_field_type[${index}]" class="ag-field-type">
                                 ${this.renderFieldTypesOptions(fieldType)}
                             </select>
                         </div>
-                        <div class="fk-field-type-settings" data-type="${fieldType}">
+                        <div class="ag-field-type-settings" data-type="${fieldType}">
                             ${this.renderFieldTypeSettings(index, fieldType)}
                         </div>
                     </div>
                 </div>
             `;
 
-            $('.fk-fields-list').append(rowHtml);
-            $('#fk-new-field-type').val('');
+            $('.ag-fields-list').append(rowHtml);
+            $('#ag-new-field-type').val('');
             this.updateFieldsData();
         },
 
         removeField: function (e) {
             e.preventDefault();
-            if (confirm(fk_admin.i18n.remove_field)) {
-                $(e.currentTarget).closest('.fk-field-row').remove();
+            if (confirm(ag_admin.i18n.remove_field)) {
+                $(e.currentTarget).closest('.ag-field-row').remove();
                 this.updateFieldsData();
             }
         },
 
         changeFieldType: function (e) {
-            const $row = $(e.currentTarget).closest('.fk-field-row');
+            const $row = $(e.currentTarget).closest('.ag-field-row');
             const newType = $(e.currentTarget).val();
             const index = $row.data('index');
 
-            $row.find('.fk-field-type-settings').html(this.renderFieldTypeSettings(index, newType));
-            $row.find('.fk-field-type-badge').text(fk_admin.fields_registry[newType].label);
+            $row.find('.ag-field-type-settings').html(this.renderFieldTypeSettings(index, newType));
+            $row.find('.ag-field-type-badge').text(ag_admin.fields_registry[newType].label);
             this.updateFieldsData();
         },
 
         addPricingRow: function (e) {
             e.preventDefault();
-            const $container = $(e.currentTarget).siblings('.fk-pricing-table');
+            const $container = $(e.currentTarget).siblings('.ag-pricing-table');
             const fieldIndex = $container.data('field-index');
-            const rowCount = $container.find('.fk-pricing-row').length;
+            const rowCount = $container.find('.ag-pricing-row').length;
 
             const rowHtml = `
-                <div class="fk-pricing-row">
-                    <input type="text" name="fk_field_options[${fieldIndex}][${rowCount}][value]" 
-                           placeholder="${fk_admin.i18n.value}" class="regular-text">
-                    <input type="number" name="fk_field_options[${fieldIndex}][${rowCount}][price]" 
-                           placeholder="${fk_admin.i18n.price}" class="small-text" value="0">
-                    <button type="button" class="fk-remove-pricing-row button-link-delete">
+                <div class="ag-pricing-row">
+                    <input type="text" name="ag_field_options[${fieldIndex}][${rowCount}][value]" 
+                           placeholder="${ag_admin.i18n.value}" class="regular-text">
+                    <input type="number" name="ag_field_options[${fieldIndex}][${rowCount}][price]" 
+                           placeholder="${ag_admin.i18n.price}" class="small-text" value="0">
+                    <button type="button" class="ag-remove-pricing-row button-link-delete">
                         <span class="dashicons dashicons-trash"></span>
                     </button>
                 </div>
@@ -125,7 +125,7 @@
 
         removePricingRow: function (e) {
             e.preventDefault();
-            $(e.currentTarget).closest('.fk-pricing-row').remove();
+            $(e.currentTarget).closest('.ag-pricing-row').remove();
         },
 
         insertVariable: function (e) {
@@ -139,7 +139,7 @@
         },
 
         insertIntoFormula: function (text) {
-            const $textarea = $('#fk_formula_expression');
+            const $textarea = $('#ag_formula_expression');
             const textarea = $textarea[0];
             const start = textarea.selectionStart;
             const end = textarea.selectionEnd;
@@ -153,18 +153,18 @@
         testFormula: function (e) {
             e.preventDefault();
 
-            const expression = $('#fk_formula_expression').val();
-            const $resultDiv = $('#fk-formula-test-result');
+            const expression = $('#ag_formula_expression').val();
+            const $resultDiv = $('#ag-formula-test-result');
 
             if (!expression) {
-                $resultDiv.html('<span class="error">' + fk_admin.i18n.empty_formula + '</span>');
+                $resultDiv.html('<span class="error">' + ag_admin.i18n.empty_formula + '</span>');
                 return;
             }
 
             const testData = {};
-            $('.fk-field-row').each(function () {
-                const key = $(this).find('.fk-field-key').val();
-                const type = $(this).find('.fk-field-type').val();
+            $('.ag-field-row').each(function () {
+                const key = $(this).find('.ag-field-key').val();
+                const type = $(this).find('.ag-field-type').val();
 
                 if (key) {
                     if (['number', 'range'].includes(type)) {
@@ -172,15 +172,15 @@
                     } else if (type === 'checkbox') {
                         testData[key] = 1;
                     } else {
-                        const firstOption = $(this).find('.fk-pricing-row input[type="text"]').first().val();
+                        const firstOption = $(this).find('.ag-pricing-row input[type="text"]').first().val();
                         testData[key] = firstOption || 'default';
                     }
                 }
             });
 
-            $.post(fk_admin.ajax_url, {
-                action: 'fk_test_formula',
-                nonce: fk_admin.nonce,
+            $.post(ag_admin.ajax_url, {
+                action: 'ag_test_formula',
+                nonce: ag_admin.nonce,
                 expression: expression,
                 variables: testData,
                 post_id: $('#post_ID').val()
@@ -188,7 +188,7 @@
                 if (response.success) {
                     $resultDiv.html(
                         '<span class="success">' +
-                        fk_admin.i18n.calculation_result + ' <strong>' +
+                        ag_admin.i18n.calculation_result + ' <strong>' +
                         response.data.price + ' ₽</strong></span>'
                     );
                 } else {
@@ -200,12 +200,12 @@
         updateFieldsData: function () {
             const fields = [];
 
-            $('.fk-field-row').each(function (index) {
+            $('.ag-field-row').each(function (index) {
                 const $row = $(this);
                 const field = {
-                    key: $row.find('.fk-field-key').val(),
-                    label: $row.find('.fk-field-label').val(),
-                    type: $row.find('.fk-field-type').val(),
+                    key: $row.find('.ag-field-key').val(),
+                    label: $row.find('.ag-field-label').val(),
+                    type: $row.find('.ag-field-type').val(),
                     config: {}
                 };
 
@@ -220,7 +220,7 @@
 
                 if (['select', 'radio'].includes(type)) {
                     const options = [];
-                    $row.find('.fk-pricing-row').each(function () {
+                    $row.find('.ag-pricing-row').each(function () {
                         const $pricingRow = $(this);
                         options.push({
                             value: $pricingRow.find('input[type="text"]').val(),
@@ -237,13 +237,13 @@
                 fields.push(field);
             });
 
-            $('#fk_fields_data').val(JSON.stringify(fields));
+            $('#ag_fields_data').val(JSON.stringify(fields));
         },
 
         renderFieldTypesOptions: function (selected) {
-            let options = '<option value="">' + fk_admin.i18n.select_type + '</option>';
+            let options = '<option value="">' + ag_admin.i18n.select_type + '</option>';
 
-            for (const [key, config] of Object.entries(fk_admin.fields_registry)) {
+            for (const [key, config] of Object.entries(ag_admin.fields_registry)) {
                 options += `<option value="${key}" ${key === selected ? 'selected' : ''}>${config.label}</option>`;
             }
 
@@ -255,37 +255,37 @@
 
             if (['number', 'range'].includes(type)) {
                 html = `
-                    <div class="fk-field-setting">
+                    <div class="ag-field-setting">
                         <label>Мин</label>
-                        <input type="number" name="fk_field_config[${index}][min]" value="1" class="small-text">
+                        <input type="number" name="ag_field_config[${index}][min]" value="1" class="small-text">
                     </div>
-                    <div class="fk-field-setting">
+                    <div class="ag-field-setting">
                         <label>Макс</label>
-                        <input type="number" name="fk_field_config[${index}][max]" value="100" class="small-text">
+                        <input type="number" name="ag_field_config[${index}][max]" value="100" class="small-text">
                     </div>
-                    <div class="fk-field-setting">
+                    <div class="ag-field-setting">
                         <label>Шаг</label>
-                        <input type="number" name="fk_field_config[${index}][step]" value="1" class="small-text">
+                        <input type="number" name="ag_field_config[${index}][step]" value="1" class="small-text">
                     </div>
                 `;
             }
 
             if (['select', 'radio'].includes(type)) {
                 html = `
-                    <div class="fk-field-setting">
+                    <div class="ag-field-setting">
                         <label>Значения и цены</label>
-                        <div class="fk-pricing-table" data-field-index="${index}">
-                            <div class="fk-pricing-row">
-                                <input type="text" name="fk_field_options[${index}][0][value]" 
+                        <div class="ag-pricing-table" data-field-index="${index}">
+                            <div class="ag-pricing-row">
+                                <input type="text" name="ag_field_options[${index}][0][value]" 
                                        placeholder="Значение" class="regular-text">
-                                <input type="number" name="fk_field_options[${index}][0][price]" 
+                                <input type="number" name="ag_field_options[${index}][0][price]" 
                                        placeholder="Цена" class="small-text" value="0">
-                                <button type="button" class="fk-remove-pricing-row button-link-delete">
+                                <button type="button" class="ag-remove-pricing-row button-link-delete">
                                     <span class="dashicons dashicons-trash"></span>
                                 </button>
                             </div>
                         </div>
-                        <button type="button" class="fk-add-pricing-row button button-secondary">
+                        <button type="button" class="ag-add-pricing-row button button-secondary">
                             <span class="dashicons dashicons-plus-alt"></span> Добавить значение
                         </button>
                     </div>
@@ -294,9 +294,9 @@
 
             if (type === 'checkbox') {
                 html = `
-                    <div class="fk-field-setting">
+                    <div class="ag-field-setting">
                         <label>Цена если отмечено</label>
-                        <input type="number" name="fk_field_config[${index}][price]" value="0" class="small-text">
+                        <input type="number" name="ag_field_config[${index}][price]" value="0" class="small-text">
                     </div>
                 `;
             }
@@ -306,7 +306,7 @@
     };
 
     $(document).ready(function () {
-        FKAdmin.init();
+        AGAdmin.init();
     });
 
 })(jQuery);

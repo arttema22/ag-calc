@@ -6,13 +6,13 @@
 if (!defined('ABSPATH'))
     exit;
 
-class FK_Shortcodes
+class AG_Shortcodes
 {
 
     public function __construct()
     {
-        add_shortcode('fk_calculator_tabs', [$this, 'render_tabs']);
-        add_shortcode('fk_calculator_product', [$this, 'render_single']);
+        add_shortcode('ag_calculator_tabs', [$this, 'render_tabs']);
+        add_shortcode('ag_calculator_product', [$this, 'render_single']);
         add_action('wp_enqueue_scripts', [$this, 'enqueue_frontend_assets']);
     }
 
@@ -28,7 +28,7 @@ class FK_Shortcodes
         wp_enqueue_style('bootstrap');
 
         // Стили калькулятора
-        wp_enqueue_style('fk-calc-css', FK_CALC_PLUGIN_URL . 'assets/css/frontend-styles.css', [], FK_CALC_VERSION);
+        wp_enqueue_style('ag-calc-css', AG_CALC_PLUGIN_URL . 'assets/css/frontend-styles.css', [], AG_CALC_VERSION);
 
         // Bootstrap JS
         if (!wp_script_is('bootstrap', 'registered')) {
@@ -37,73 +37,73 @@ class FK_Shortcodes
         wp_enqueue_script('bootstrap');
 
         // Скрипт калькулятора
-        wp_enqueue_script('fk-calc-js', FK_CALC_PLUGIN_URL . 'assets/js/frontend-calculator.js', ['jquery', 'bootstrap'], FK_CALC_VERSION, true);
+        wp_enqueue_script('ag-calc-js', AG_CALC_PLUGIN_URL . 'assets/js/frontend-calculator.js', ['jquery', 'bootstrap'], AG_CALC_VERSION, true);
 
         // Локализация для JS
-        wp_localize_script('fk-calc-js', 'fk_calc', [
-            'api_root' => rest_url('fk-calc/v1'),
+        wp_localize_script('ag-calc-js', 'ag_calc', [
+            'api_root' => rest_url('ag-calc/v1'),
             'nonce' => wp_create_nonce('wp_rest'),
             'i18n' => [
-                'loading' => __('Загрузка...', 'foto-kniga-calc'),
-                'error' => __('Ошибка расчета', 'foto-kniga-calc'),
-                'price_label' => __('Итого:', 'foto-kniga-calc'),
-                'currency' => __('₽', 'foto-kniga-calc')
+                'loading' => __('Загрузка...', 'ag-calc'),
+                'error' => __('Ошибка расчета', 'ag-calc'),
+                'price_label' => __('Итого:', 'ag-calc'),
+                'currency' => __('₽', 'ag-calc')
             ]
         ]);
     }
 
     /**
      * Главный шорткод - все продукты во вкладках
-     * [fk_calculator_tabs]
+     * [ag_calculator_tabs]
      */
     public function render_tabs($atts)
     {
-        $products = FK_Product_Manager::get_all_products();
+        $products = AG_Product_Manager::get_all_products();
 
         if (empty($products)) {
-            return '<div class="fk-calculator-message">' .
-                __('Продукты не настроены', 'foto-kniga-calc') .
+            return '<div class="ag-calculator-message">' .
+                __('Продукты не настроены', 'ag-calc') .
                 '</div>';
         }
 
         // Сортировка по menu_order
         usort($products, function ($a, $b) {
-            $order_a = get_post_meta($a->ID, '_fk_display', true);
-            $order_b = get_post_meta($b->ID, '_fk_display', true);
+            $order_a = get_post_meta($a->ID, '_ag_display', true);
+            $order_b = get_post_meta($b->ID, '_ag_display', true);
             return ($order_a['menu_order'] ?? 0) - ($order_b['menu_order'] ?? 0);
         });
 
         ob_start();
-        include FK_CALC_PLUGIN_DIR . 'templates/tabs-wrapper.php';
+        include AG_CALC_PLUGIN_DIR . 'templates/tabs-wrapper.php';
         return ob_get_clean();
     }
 
     /**
      * Шорткод одного продукта
-     * [fk_calculator_product slug="butterfly-photo"]
+     * [ag_calculator_product slug="butterfly-photo"]
      */
     public function render_single($atts)
     {
         $atts = shortcode_atts(['slug' => ''], $atts);
 
         if (empty($atts['slug'])) {
-            return '<div class="fk-calculator-message">' .
-                __('Укажите slug продукта', 'foto-kniga-calc') .
+            return '<div class="ag-calculator-message">' .
+                __('Укажите slug продукта', 'ag-calc') .
                 '</div>';
         }
 
-        $product = FK_Product_Manager::get_product_by_slug($atts['slug']);
+        $product = AG_Product_Manager::get_product_by_slug($atts['slug']);
 
         if (!$product) {
-            return '<div class="fk-calculator-message">' .
-                __('Продукт не найден', 'foto-kniga-calc') .
+            return '<div class="ag-calculator-message">' .
+                __('Продукт не найден', 'ag-calc') .
                 '</div>';
         }
 
-        $config = FK_Product_Manager::get_product_config($product->ID);
+        $config = AG_Product_Manager::get_product_config($product->ID);
 
         ob_start();
-        include FK_CALC_PLUGIN_DIR . 'templates/single-product.php';
+        include AG_CALC_PLUGIN_DIR . 'templates/single-product.php';
         return ob_get_clean();
     }
 
@@ -121,14 +121,14 @@ class FK_Shortcodes
             return '';
         }
 
-        $html = '<div class="fk-field fk-field-' . esc_attr($type) . '" data-field-key="' . esc_attr($key) . '">';
-        $html .= '<label class="fk-field-label">' . esc_html($label) . '</label>';
+        $html = '<div class="ag-field ag-field-' . esc_attr($type) . '" data-field-key="' . esc_attr($key) . '">';
+        $html .= '<label class="ag-field-label">' . esc_html($label) . '</label>';
 
         switch ($type) {
             case 'number':
                 $html .= '<input type="number" 
                             name="' . esc_attr($key) . '" 
-                            class="fk-field-input form-control" 
+                            class="ag-field-input form-control" 
                             data-field-key="' . esc_attr($key) . '"
                             min="' . esc_attr($config['min'] ?? 1) . '" 
                             max="' . esc_attr($config['max'] ?? 100) . '" 
@@ -142,22 +142,22 @@ class FK_Shortcodes
                 $step = $config['step'] ?? 1;
                 $default = $config['default'] ?? $min;
 
-                $html .= '<div class="fk-range-wrapper">';
+                $html .= '<div class="ag-range-wrapper">';
                 $html .= '<input type="range" 
                             name="' . esc_attr($key) . '" 
-                            class="fk-field-range form-control-range" 
+                            class="ag-field-range form-control-range" 
                             data-field-key="' . esc_attr($key) . '"
                             min="' . esc_attr($min) . '" 
                             max="' . esc_attr($max) . '" 
                             step="' . esc_attr($step) . '" 
                             value="' . esc_attr($default) . '">';
-                $html .= '<span class="fk-range-value">' . esc_html($default) . '</span>';
+                $html .= '<span class="ag-range-value">' . esc_html($default) . '</span>';
                 $html .= '</div>';
                 break;
 
             case 'select':
                 $html .= '<select name="' . esc_attr($key) . '"
-                            class="fk-field-select form-control"
+                            class="ag-field-select form-control"
                             data-field-key="' . esc_attr($key) . '">';
                 if (!empty($config['options'])) {
                     foreach ($config['options'] as $option) {
@@ -171,15 +171,15 @@ class FK_Shortcodes
                 break;
 
             case 'radio':
-                $html .= '<div class="fk-field fk-field-radio" data-field-key="' . esc_attr($key) . '">';
-                $html .= '<div class="fk-radio-group">';
+                $html .= '<div class="ag-field ag-field-radio" data-field-key="' . esc_attr($key) . '">';
+                $html .= '<div class="ag-radio-group">';
                 if (!empty($config['options'])) {
                     foreach ($config['options'] as $i => $option) {
                         $price = floatval($option['price'] ?? 0);
                         $html .= '<div class="form-check">';
                         $html .= '<input type="radio"
                                     name="' . esc_attr($key) . '"
-                                    class="form-check-input fk-field-radio-input"
+                                    class="form-check-input ag-field-radio-input"
                                     data-field-key="' . esc_attr($key) . '"
                                     data-price="' . esc_attr($price) . '"
                                     value="' . esc_attr($option['value']) . '"
@@ -197,7 +197,7 @@ class FK_Shortcodes
                 $html .= '<div class="form-check">';
                 $html .= '<input type="checkbox"
                             name="' . esc_attr($key) . '"
-                            class="form-check-input fk-field-checkbox"
+                            class="form-check-input ag-field-checkbox"
                             data-field-key="' . esc_attr($key) . '"
                             value="on" id="' . esc_attr($key) . '">';
                 $html .= '<label class="form-check-label" for="' . esc_attr($key) . '">' .

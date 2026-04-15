@@ -6,7 +6,7 @@
 if (!defined('ABSPATH'))
     exit;
 
-class FK_Formula_Engine
+class AG_Formula_Engine
 {
 
     private static $instance = null;
@@ -15,20 +15,20 @@ class FK_Formula_Engine
     private function __construct()
     {
         $this->operators = [
-            '+' => __('Сложение', 'foto-kniga-calc'),
-            '-' => __('Вычитание', 'foto-kniga-calc'),
-            '*' => __('Умножение', 'foto-kniga-calc'),
-            '/' => __('Деление', 'foto-kniga-calc'),
-            '(' => __('Открыть скобку', 'foto-kniga-calc'),
-            ')' => __('Закрыть скобку', 'foto-kniga-calc'),
-            'pow' => __('Степень', 'foto-kniga-calc'),
-            'min' => __('Минимум', 'foto-kniga-calc'),
-            'max' => __('Максимум', 'foto-kniga-calc'),
-            'round' => __('Округление', 'foto-kniga-calc'),
-            'abs' => __('Модуль', 'foto-kniga-calc'),
-            'ceil' => __('Округление вверх', 'foto-kniga-calc'),
-            'floor' => __('Округление вниз', 'foto-kniga-calc'),
-            'if' => __('Условие', 'foto-kniga-calc')
+            '+' => __('Сложение', 'ag-calc'),
+            '-' => __('Вычитание', 'ag-calc'),
+            '*' => __('Умножение', 'ag-calc'),
+            '/' => __('Деление', 'ag-calc'),
+            '(' => __('Открыть скобку', 'ag-calc'),
+            ')' => __('Закрыть скобку', 'ag-calc'),
+            'pow' => __('Степень', 'ag-calc'),
+            'min' => __('Минимум', 'ag-calc'),
+            'max' => __('Максимум', 'ag-calc'),
+            'round' => __('Округление', 'ag-calc'),
+            'abs' => __('Модуль', 'ag-calc'),
+            'ceil' => __('Округление вверх', 'ag-calc'),
+            'floor' => __('Округление вниз', 'ag-calc'),
+            'if' => __('Условие', 'ag-calc')
         ];
     }
 
@@ -209,7 +209,7 @@ class FK_Formula_Engine
             $expression = html_entity_decode($expression, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
             if (empty(trim($expression))) {
-                throw new Exception(__('Формула не может быть пустой', 'foto-kniga-calc'));
+                throw new Exception(__('Формула не может быть пустой', 'ag-calc'));
             }
 
             $lines = array_filter(array_map('trim', preg_split('/[\r\n]+/', $expression)));
@@ -257,7 +257,7 @@ class FK_Formula_Engine
             $parsed_expression = trim($parsed_expression);
 
             if (!self::is_safe_expression($parsed_expression)) {
-                throw new Exception(__('Недопустимые символы в формуле', 'foto-kniga-calc') . ': ' . $parsed_expression);
+                throw new Exception(__('Недопустимые символы в формуле', 'ag-calc') . ': ' . $parsed_expression);
             }
 
             $result = self::safe_eval($parsed_expression);
@@ -328,20 +328,20 @@ class FK_Formula_Engine
 
         foreach ($dangerous as $danger) {
             if (stripos($expression, $danger) !== false) {
-                error_log('FK Blocked dangerous: ' . $danger . ' in: ' . $expression);
+                error_log('AG Blocked dangerous: ' . $danger . ' in: ' . $expression);
                 return false;
             }
         }
 
         if (!preg_match('/^[0-9a-zA-Z_\s+\-*\/().,<>!?=:&|;]+$/', $expression)) {
-            error_log('FK Regex failed: ' . $expression);
+            error_log('AG Regex failed: ' . $expression);
             return false;
         }
 
         $open = substr_count($expression, '(');
         $close = substr_count($expression, ')');
         if ($open !== $close) {
-            error_log('FK Bracket mismatch: ' . $expression);
+            error_log('AG Bracket mismatch: ' . $expression);
             return false;
         }
 
@@ -358,18 +358,18 @@ class FK_Formula_Engine
 
         // Проверяем, что нет вызовов запрещенных функций
         if (preg_match('/\b(?!' . implode('|', $allowed_functions) . '\b)[a-z]+\s*\(/i', $expression)) {
-            throw new Exception(__('Запрещенная функция в формуле', 'foto-kniga-calc'));
+            throw new Exception(__('Запрещенная функция в формуле', 'ag-calc'));
         }
 
         // Вычисляем
         $result = @eval ('return (' . $expression . ');');
 
         if ($result === false && !is_numeric($result)) {
-            throw new Exception(__('Ошибка вычисления формулы', 'foto-kniga-calc'));
+            throw new Exception(__('Ошибка вычисления формулы', 'ag-calc'));
         }
 
         if (!is_numeric($result)) {
-            throw new Exception(__('Результат не является числом', 'foto-kniga-calc'));
+            throw new Exception(__('Результат не является числом', 'ag-calc'));
         }
 
         return $result;
@@ -385,14 +385,14 @@ class FK_Formula_Engine
         $errors = [];
 
         if (empty(trim($expression))) {
-            $errors[] = __('Формула не может быть пустой', 'foto-kniga-calc');
+            $errors[] = __('Формула не может быть пустой', 'ag-calc');
             return ['valid' => false, 'errors' => $errors];
         }
 
         $open_brackets = substr_count($expression, '(');
         $close_brackets = substr_count($expression, ')');
         if ($open_brackets !== $close_brackets) {
-            $errors[] = __('Несбалансированные скобки', 'foto-kniga-calc');
+            $errors[] = __('Несбалансированные скобки', 'ag-calc');
         }
 
         // Проверка переменных {{var}}
@@ -405,7 +405,7 @@ class FK_Formula_Engine
         }
 
         if (preg_match('/[\'"\\\\$`]/', $expression)) {
-            $errors[] = __('Запрещенные символы в формуле', 'foto-kniga-calc');
+            $errors[] = __('Запрещенные символы в формуле', 'ag-calc');
         }
 
         return [

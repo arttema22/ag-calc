@@ -1,19 +1,19 @@
-#fk_product_settings .form-table th {
+#ag_product_settings .form-table th {
     width: 200px;
 }
 
-#fk-fields-container {
+#ag-fields-container {
     background: #fff;
     border: 1px solid #ccd0d4;
     padding: 15px;
     margin-top: 10px;
 }
 
-.fk-fields-list {
+.ag-fields-list {
     margin-bottom: 15px;
 }
 
-.fk-field-row {
+.ag-field-row {
     background: #f9f9f9;
     border: 1px solid #ddd;
     margin-bottom: 10px;
@@ -21,18 +21,18 @@
     border-radius: 3px;
 }
 
-.fk-field-row.ui-sortable-helper {
+.ag-field-row.ui-sortable-helper {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
-.fk-field-placeholder {
+.ag-field-placeholder {
     background: #f0f0f1;
     border: 2px dashed #bbb;
     height: 100px;
     margin-bottom: 10px;
 }
 
-.fk-field-header {
+.ag-field-header {
     display: flex;
     align-items: center;
     margin-bottom: 15px;
@@ -40,13 +40,13 @@
     border-bottom: 1px solid #eee;
 }
 
-.fk-field-handle {
+.ag-field-handle {
     cursor: move;
     color: #999;
     margin-right: 10px;
 }
 
-.fk-field-type-badge {
+.ag-field-type-badge {
     background: #0073aa;
     color: #fff;
     padding: 2px 8px;
@@ -55,71 +55,71 @@
     margin-left: 10px;
 }
 
-.fk-remove-field {
+.ag-remove-field {
     margin-left: auto;
     color: #a00;
 }
 
-.fk-field-type-settings {
+.ag-field-type-settings {
     display: flex;
 }
 
-.fk-field-settings {
+.ag-field-settings {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 15px;
 }
 
-.fk-field-setting {
+.ag-field-setting {
     display: flex;
     flex-direction: column;
 }
 
-.fk-field-setting label {
+.ag-field-setting label {
     font-weight: 600;
     margin-bottom: 5px;
     font-size: 13px;
 }
 
-.fk-pricing-table {
+.ag-pricing-table {
     margin: 10px 0;
 }
 
-.fk-pricing-row {
+.ag-pricing-row {
     display: flex;
     align-items: center;
     gap: 10px;
     margin-bottom: 8px;
 }
 
-.fk-pricing-row input[type="text"] {
+.ag-pricing-row input[type="text"] {
     flex: 2;
 }
 
-.fk-pricing-row input[type="number"] {
+.ag-pricing-row input[type="number"] {
     flex: 1;
 }
 
-.fk-formula-builder {
+.ag-formula-builder {
     background: #fff;
     padding: 15px;
 }
 
-.fk-formula-variables,
-.fk-formula-operators {
+.ag-formula-variables,
+.ag-formula-operators {
     margin-bottom: 15px;
 }
 
-.fk-variables-list,
-.fk-operators-list {
+.ag-variables-list,
+.ag-operators-list {
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
     margin-top: 8px;
 }
 
-.fk-variable-tag,
-.fk-operator-tag {
+.ag-variable-tag,
+.ag-operator-tag {
     background: #e5f5fa;
     border: 1px solid #0073aa;
     color: #0073aa;
@@ -130,44 +130,44 @@
     transition: all 0.2s;
 }
 
-.fk-variable-tag:hover,
-.fk-operator-tag:hover {
+.ag-variable-tag:hover,
+.ag-operator-tag:hover {
     background: #0073aa;
     color: #fff;
 }
 
-#fk_formula_expression {
+#ag_formula_expression {
     font-family: "Consolas", "Monaco", monospace;
     font-size: 14px;
 }
 
-.fk-formula-test {
+.ag-formula-test {
     margin-top: 15px;
     padding-top: 15px;
     border-top: 1px solid #eee;
 }
 
-.fk-test-result {
+.ag-test-result {
     margin-top: 10px;
     padding: 10px;
     border-radius: 3px;
 }
 
-.fk-test-result .success {
+.ag-test-result .success {
     color: #46b450;
     background: #ecf7ed;
     padding: 8px 12px;
     display: inline-block;
 }
 
-.fk-test-result .error {
+.ag-test-result .error {
     color: #dc3232;
     background: #fbeaea;
     padding: 8px 12px;
     display: inline-block;
 }
 
-.fk-add-field-wrapper {
+.ag-add-field-wrapper {
     display: flex;
     gap: 10px;
     align-items: center;
@@ -176,16 +176,16 @@
 }
 
 @media screen and (max-width: 782px) {
-    .fk-field-settings {
+    .ag-field-settings {
         grid-template-columns: 1fr;
     }
 
-    .fk-pricing-row {
+    .ag-pricing-row {
         flex-wrap: wrap;
     }
 
-    .fk-pricing-row input[type="text"],
-    .fk-pricing-row input[type="number"] {
+    .ag-pricing-row input[type="text"],
+    .ag-pricing-row input[type="number"] {
         flex: 1 1 100%;
     }
 }

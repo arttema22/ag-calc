@@ -3,24 +3,28 @@
  * REST API для калькулятора
  */
 
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH'))
+    exit;
 
-class FK_REST_API {
-    
-    public function __construct() {
+class AG_REST_API
+{
+
+    public function __construct()
+    {
         add_action('rest_api_init', [$this, 'register_routes']);
     }
-    
-    public function register_routes() {
+
+    public function register_routes()
+    {
         // Список всех продуктов
-        register_rest_route('fk-calc/v1', '/products', [
+        register_rest_route('ag-calc/v1', '/products', [
             'methods' => 'GET',
             'callback' => [$this, 'get_products_list'],
             'permission_callback' => '__return_true'
         ]);
-        
+
         // Конфигурация конкретного продукта
-        register_rest_route('fk-calc/v1', '/products/(?P<slug>[a-zA-Z0-9-]+)', [
+        register_rest_route('ag-calc/v1', '/products/(?P<slug>[a-zA-Z0-9-]+)', [
             'methods' => 'GET',
             'callback' => [$this, 'get_product_config'],
             'permission_callback' => '__return_true',
@@ -31,9 +35,9 @@ class FK_REST_API {
                 ]
             ]
         ]);
-        
+
         // Расчет стоимости
-        register_rest_route('fk-calc/v1', '/calculate', [
+        register_rest_route('ag-calc/v1', '/calculate', [
             'methods' => 'POST',
             'callback' => [$this, 'calculate_price'],
             'permission_callback' => '__return_true',
@@ -49,13 +53,14 @@ class FK_REST_API {
             ]
         ]);
     }
-    
-    public function get_products_list() {
-        $products = FK_Product_Manager::get_all_products();
+
+    public function get_products_list()
+    {
+        $products = AG_Product_Manager::get_all_products();
         $result = [];
-        
+
         foreach ($products as $product) {
-            $config = FK_Product_Manager::get_product_config($product->ID);
+            $config = AG_Product_Manager::get_product_config($product->ID);
             $result[] = [
                 'id' => $product->ID,
                 'title' => $product->post_title,
@@ -63,34 +68,36 @@ class FK_REST_API {
                 'display' => $config['display']
             ];
         }
-        
+
         return rest_ensure_response($result);
     }
-    
-    public function get_product_config($request) {
+
+    public function get_product_config($request)
+    {
         $slug = $request['slug'];
-        $product = FK_Product_Manager::get_product_by_slug($slug);
-        
+        $product = AG_Product_Manager::get_product_by_slug($slug);
+
         if (!$product) {
-            return new WP_Error('not_found', __('Продукт не найден', 'foto-kniga-calc'), ['status' => 404]);
+            return new WP_Error('not_found', __('Продукт не найден', 'ag-calc'), ['status' => 404]);
         }
-        
-        $config = FK_Product_Manager::get_product_config($product->ID);
+
+        $config = AG_Product_Manager::get_product_config($product->ID);
         return rest_ensure_response($config);
     }
-    
-    public function calculate_price($request) {
+
+    public function calculate_price($request)
+    {
         $slug = $request['product_slug'];
         $fields_data = $request['fields'];
-        
-        $product = FK_Product_Manager::get_product_by_slug($slug);
-        
+
+        $product = AG_Product_Manager::get_product_by_slug($slug);
+
         if (!$product) {
-            return new WP_Error('not_found', __('Продукт не найден', 'foto-kniga-calc'), ['status' => 404]);
+            return new WP_Error('not_found', __('Продукт не найден', 'ag-calc'), ['status' => 404]);
         }
-        
-        $config = FK_Product_Manager::get_product_config($product->ID);
-        
+
+        $config = AG_Product_Manager::get_product_config($product->ID);
+
         // Подготовка переменных для формулы
         $variables = [];
         foreach ($config['fields'] as $field) {
@@ -127,11 +134,11 @@ class FK_REST_API {
                 $variables[$key] = floatval($value ?? 0);
             }
         }
-        
+
         // Расчет
         $formula = $config['formula']['expression'] ?? '';
-        $result = FK_Formula_Engine::calculate($formula, $variables);
-        
+        $result = AG_Formula_Engine::calculate($formula, $variables);
+
         return rest_ensure_response([
             'success' => $result['success'],
             'price' => $result['price'],

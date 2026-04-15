@@ -1,4 +1,4 @@
-# Foto Kniga Calculator — Руководство администратора
+# AG Calculator — Руководство администратора
 
 ## Оглавление
 
@@ -305,7 +305,7 @@ discount = if({{is_vip}} == 1 || {{kolvo}} >= 50, 0.2, 0);
 Отображает все продукты в виде вкладок:
 
 ```
-[fk_calculator_tabs]
+[ag_calculator_tabs]
 ```
 
 ### Шорткод: Один продукт
@@ -313,7 +313,7 @@ discount = if({{is_vip}} == 1 || {{kolvo}} >= 50, 0.2, 0);
 Отображает конкретный продукт по slug:
 
 ```
-[fk_calculator_product slug="butterfly-photo"]
+[ag_calculator_product slug="butterfly-photo"]
 ```
 
 ### Как добавить на страницу
@@ -332,19 +332,19 @@ discount = if({{is_vip}} == 1 || {{kolvo}} >= 50, 0.2, 0);
 ### Получить список продуктов
 
 ```
-GET /wp-json/fk-calc/v1/products
+GET /wp-json/ag-calc/v1/products
 ```
 
 ### Получить конфигурацию продукта
 
 ```
-GET /wp-json/fk-calc/v1/products/{slug}
+GET /wp-json/ag-calc/v1/products/{slug}
 ```
 
 ### Расчёт стоимости
 
 ```
-POST /wp-json/fk-calc/v1/calculate
+POST /wp-json/ag-calc/v1/calculate
 Content-Type: application/json
 
 {

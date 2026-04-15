@@ -6,44 +6,44 @@
 if (!defined('ABSPATH'))
     exit;
 
-class FK_Admin_UI
+class AG_Admin_UI
 {
 
     public function __construct()
     {
         add_action('add_meta_boxes', [$this, 'register_meta_boxes']);
-        add_action('save_post_fk_product', [$this, 'save_product_meta'], 10, 2);
+        add_action('save_post_ag_product', [$this, 'save_product_meta'], 10, 2);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_assets']);
-        add_filter('manage_fk_product_posts_columns', [$this, 'custom_columns']);
-        add_action('manage_fk_product_posts_custom_column', [$this, 'custom_column_content'], 10, 2);
-        add_action('wp_ajax_fk_test_formula', [$this, 'ajax_test_formula']);
+        add_filter('manage_ag_product_posts_columns', [$this, 'custom_columns']);
+        add_action('manage_ag_product_posts_custom_column', [$this, 'custom_column_content'], 10, 2);
+        add_action('wp_ajax_ag_test_formula', [$this, 'ajax_test_formula']);
     }
 
     public function register_meta_boxes()
     {
         add_meta_box(
-            'fk_product_settings',
-            __('Настройки продукта', 'foto-kniga-calc'),
+            'ag_product_settings',
+            __('Настройки продукта', 'ag-calc'),
             [$this, 'render_product_settings'],
-            'fk_product',
+            'ag_product',
             'normal',
             'high'
         );
 
         add_meta_box(
-            'fk_product_fields',
-            __('Поля калькулятора', 'foto-kniga-calc'),
+            'ag_product_fields',
+            __('Поля калькулятора', 'ag-calc'),
             [$this, 'render_product_fields'],
-            'fk_product',
+            'ag_product',
             'normal',
             'high'
         );
 
         add_meta_box(
-            'fk_product_formula',
-            __('Формула расчета', 'foto-kniga-calc'),
+            'ag_product_formula',
+            __('Формула расчета', 'ag-calc'),
             [$this, 'render_product_formula'],
-            'fk_product',
+            'ag_product',
             'normal',
             'high'
         );
@@ -56,30 +56,30 @@ class FK_Admin_UI
     {
         global $post_type;
 
-        if ($post_type !== 'fk_product')
+        if ($post_type !== 'ag_product')
             return;
 
-        wp_enqueue_style('fk-admin-css', FK_CALC_PLUGIN_URL . 'assets/css/admin-styles.css', [], FK_CALC_VERSION);
-        wp_enqueue_script('fk-admin-js', FK_CALC_PLUGIN_URL . 'assets/js/admin-formula-builder.js', ['jquery', 'jquery-ui-sortable'], FK_CALC_VERSION, true);
+        wp_enqueue_style('ag-admin-css', AG_CALC_PLUGIN_URL . 'assets/css/admin-styles.css', [], AG_CALC_VERSION);
+        wp_enqueue_script('ag-admin-js', AG_CALC_PLUGIN_URL . 'assets/js/admin-formula-builder.js', ['jquery', 'jquery-ui-sortable'], AG_CALC_VERSION, true);
 
-        wp_localize_script('fk-admin-js', 'fk_admin', [
+        wp_localize_script('ag-admin-js', 'ag_admin', [
             'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('fk_admin_nonce'),
-            'fields_registry' => FK_Field_Registry::get_all_fields(),
-            'operators' => FK_Formula_Engine::get_allowed_operators(),
+            'nonce' => wp_create_nonce('ag_admin_nonce'),
+            'fields_registry' => AG_Field_Registry::get_all_fields(),
+            'operators' => AG_Formula_Engine::get_allowed_operators(),
             'i18n' => [
-                'add_field' => __('Добавить поле', 'foto-kniga-calc'),
-                'remove_field' => __('Удалить', 'foto-kniga-calc'),
-                'add_pricing_row' => __('Добавить значение', 'foto-kniga-calc'),
-                'test_calculation' => __('Проверить расчет', 'foto-kniga-calc'),
-                'calculation_result' => __('Результат:', 'foto-kniga-calc'),
-                'field_key' => __('Ключ поля', 'foto-kniga-calc'),
-                'field_label' => __('Подпись', 'foto-kniga-calc'),
-                'field_type' => __('Тип', 'foto-kniga-calc'),
-                'select_type' => __('— Выберите тип поля —', 'foto-kniga-calc'),
-                'value' => __('Значение', 'foto-kniga-calc'),
-                'price' => __('Цена', 'foto-kniga-calc'),
-                'empty_formula' => __('Введите формулу', 'foto-kniga-calc')
+                'add_field' => __('Добавить поле', 'ag-calc'),
+                'remove_field' => __('Удалить', 'ag-calc'),
+                'add_pricing_row' => __('Добавить значение', 'ag-calc'),
+                'test_calculation' => __('Проверить расчет', 'ag-calc'),
+                'calculation_result' => __('Результат:', 'ag-calc'),
+                'field_key' => __('Ключ поля', 'ag-calc'),
+                'field_label' => __('Подпись', 'ag-calc'),
+                'field_type' => __('Тип', 'ag-calc'),
+                'select_type' => __('— Выберите тип поля —', 'ag-calc'),
+                'value' => __('Значение', 'ag-calc'),
+                'price' => __('Цена', 'ag-calc'),
+                'empty_formula' => __('Введите формулу', 'ag-calc')
             ]
         ]);
     }
@@ -93,8 +93,8 @@ class FK_Admin_UI
         foreach ($columns as $key => $value) {
             $new_columns[$key] = $value;
             if ($key === 'title') {
-                $new_columns['fk_slug'] = __('Слаг', 'foto-kniga-calc');
-                $new_columns['fk_fields_count'] = __('Полей', 'foto-kniga-calc');
+                $new_columns['ag_slug'] = __('Слаг', 'ag-calc');
+                $new_columns['ag_fields_count'] = __('Полей', 'ag-calc');
             }
         }
         return $new_columns;
@@ -103,12 +103,12 @@ class FK_Admin_UI
     public function custom_column_content($column, $post_id)
     {
         switch ($column) {
-            case 'fk_slug':
-                $slug = get_post_meta($post_id, '_fk_slug', true);
+            case 'ag_slug':
+                $slug = get_post_meta($post_id, '_ag_slug', true);
                 echo $slug ? '<code>' . esc_html($slug) . '</code>' : '—';
                 break;
-            case 'fk_fields_count':
-                $fields = get_post_meta($post_id, '_fk_fields', true);
+            case 'ag_fields_count':
+                $fields = get_post_meta($post_id, '_ag_fields', true);
                 $fields = is_array($fields) ? $fields : [];
                 echo count($fields);
                 break;
@@ -120,10 +120,10 @@ class FK_Admin_UI
      */
     public function render_product_settings($post)
     {
-        wp_nonce_field('fk_product_settings', 'fk_product_settings_nonce');
+        wp_nonce_field('ag_product_settings', 'ag_product_settings_nonce');
 
-        $slug = get_post_meta($post->ID, '_fk_slug', true);
-        $display = get_post_meta($post->ID, '_fk_display', true);
+        $slug = get_post_meta($post->ID, '_ag_slug', true);
+        $display = get_post_meta($post->ID, '_ag_display', true);
         $display = wp_parse_args($display, [
             'tab_title' => '',
             'menu_order' => 0
@@ -131,25 +131,25 @@ class FK_Admin_UI
         ?>
         <table class="form-table">
             <tr>
-                <th><label for="fk_slug"><?php _e('Слаг продукта', 'foto-kniga-calc'); ?></label></th>
+                <th><label for="ag_slug"><?php _e('Слаг продукта', 'ag-calc'); ?></label></th>
                 <td>
-                    <input type="text" name="fk_slug" id="fk_slug" value="<?php echo esc_attr($slug); ?>" class="regular-text"
+                    <input type="text" name="ag_slug" id="ag_slug" value="<?php echo esc_attr($slug); ?>" class="regular-text"
                         placeholder="butterfly-photo" required>
-                    <p class="description"><?php _e('Уникальный идентификатор для шорткода и API', 'foto-kniga-calc'); ?></p>
+                    <p class="description"><?php _e('Уникальный идентификатор для шорткода и API', 'ag-calc'); ?></p>
                 </td>
             </tr>
             <tr>
-                <th><label for="fk_tab_title"><?php _e('Заголовок вкладки', 'foto-kniga-calc'); ?></label></th>
+                <th><label for="ag_tab_title"><?php _e('Заголовок вкладки', 'ag-calc'); ?></label></th>
                 <td>
-                    <input type="text" name="fk_display[tab_title]" id="fk_tab_title"
+                    <input type="text" name="ag_display[tab_title]" id="ag_tab_title"
                         value="<?php echo esc_attr($display['tab_title']); ?>" class="regular-text">
-                    <p class="description"><?php _e('Отображается в главном шорткоде с вкладками', 'foto-kniga-calc'); ?></p>
+                    <p class="description"><?php _e('Отображается в главном шорткоде с вкладками', 'ag-calc'); ?></p>
                 </td>
             </tr>
             <tr>
-                <th><label for="fk_menu_order"><?php _e('Порядок отображения', 'foto-kniga-calc'); ?></label></th>
+                <th><label for="ag_menu_order"><?php _e('Порядок отображения', 'ag-calc'); ?></label></th>
                 <td>
-                    <input type="number" name="fk_display[menu_order]" id="fk_menu_order"
+                    <input type="number" name="ag_display[menu_order]" id="ag_menu_order"
                         value="<?php echo esc_attr($display['menu_order']); ?>" class="small-text" min="0">
                 </td>
             </tr>
@@ -162,35 +162,35 @@ class FK_Admin_UI
      */
     public function render_product_fields($post)
     {
-        $fields = get_post_meta($post->ID, '_fk_fields', true);
+        $fields = get_post_meta($post->ID, '_ag_fields', true);
         $fields = is_array($fields) ? $fields : [];
-        $fields_registry = FK_Field_Registry::get_all_fields();
+        $fields_registry = AG_Field_Registry::get_all_fields();
         ?>
-        <div id="fk-fields-container">
-            <div class="fk-fields-list">
+        <div id="ag-fields-container">
+            <div class="ag-fields-list">
                 <?php if (!empty($fields)): ?>
                     <?php foreach ($fields as $index => $field): ?>
                         <?php $this->render_field_row($index, $field, $fields_registry); ?>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <p class="description"><?php _e('Добавьте поля для этого продукта', 'foto-kniga-calc'); ?></p>
+                    <p class="description"><?php _e('Добавьте поля для этого продукта', 'ag-calc'); ?></p>
                 <?php endif; ?>
             </div>
 
-            <div class="fk-add-field-wrapper">
-                <select id="fk-new-field-type" class="regular-text">
-                    <option value=""><?php _e('Выберите тип поля', 'foto-kniga-calc'); ?></option>
+            <div class="ag-add-field-wrapper">
+                <select id="ag-new-field-type" class="regular-text">
+                    <option value=""><?php _e('Выберите тип поля', 'ag-calc'); ?></option>
                     <?php foreach ($fields_registry as $key => $field_type): ?>
                         <option value="<?php echo esc_attr($key); ?>"><?php echo esc_html($field_type['label']); ?></option>
                     <?php endforeach; ?>
                 </select>
-                <button type="button" id="fk-add-field" class="button button-secondary">
-                    <?php _e('Добавить поле', 'foto-kniga-calc'); ?>
+                <button type="button" id="ag-add-field" class="button button-secondary">
+                    <?php _e('Добавить поле', 'ag-calc'); ?>
                 </button>
             </div>
         </div>
 
-        <input type="hidden" name="fk_fields_data" id="fk_fields_data" value='<?php echo esc_attr(json_encode($fields)); ?>'>
+        <input type="hidden" name="ag_fields_data" id="ag_fields_data" value='<?php echo esc_attr(json_encode($fields)); ?>'>
         <?php
     }
 
@@ -202,32 +202,32 @@ class FK_Admin_UI
         $type = $field['type'] ?? 'number';
         $field_config = $registry[$type] ?? $registry['number'];
         ?>
-        <div class="fk-field-row" data-index="<?php echo esc_attr($index); ?>">
-            <div class="fk-field-header">
-                <span class="fk-field-handle dashicons dashicons-menu"></span>
-                <strong><?php echo esc_html($field['label'] ?? __('Поле', 'foto-kniga-calc')); ?></strong>
-                <span class="fk-field-type-badge"><?php echo esc_html($field_config['label']); ?></span>
-                <button type="button" class="fk-remove-field button-link-delete">
+        <div class="ag-field-row" data-index="<?php echo esc_attr($index); ?>">
+            <div class="ag-field-header">
+                <span class="ag-field-handle dashicons dashicons-menu"></span>
+                <strong><?php echo esc_html($field['label'] ?? __('Поле', 'ag-calc')); ?></strong>
+                <span class="ag-field-type-badge"><?php echo esc_html($field_config['label']); ?></span>
+                <button type="button" class="ag-remove-field button-link-delete">
                     <span class="dashicons dashicons-trash"></span>
                 </button>
             </div>
 
-            <div class="fk-field-settings">
-                <div class="fk-field-setting">
-                    <label><?php _e('Ключ поля', 'foto-kniga-calc'); ?></label>
-                    <input type="text" name="fk_field_key[<?php echo $index; ?>]"
-                        value="<?php echo esc_attr($field['key'] ?? ''); ?>" class="fk-field-key" required>
+            <div class="ag-field-settings">
+                <div class="ag-field-setting">
+                    <label><?php _e('Ключ поля', 'ag-calc'); ?></label>
+                    <input type="text" name="ag_field_key[<?php echo $index; ?>]"
+                        value="<?php echo esc_attr($field['key'] ?? ''); ?>" class="ag-field-key" required>
                 </div>
 
-                <div class="fk-field-setting">
-                    <label><?php _e('Подпись', 'foto-kniga-calc'); ?></label>
-                    <input type="text" name="fk_field_label[<?php echo $index; ?>]"
-                        value="<?php echo esc_attr($field['label'] ?? ''); ?>" class="fk-field-label">
+                <div class="ag-field-setting">
+                    <label><?php _e('Подпись', 'ag-calc'); ?></label>
+                    <input type="text" name="ag_field_label[<?php echo $index; ?>]"
+                        value="<?php echo esc_attr($field['label'] ?? ''); ?>" class="ag-field-label">
                 </div>
 
-                <div class="fk-field-setting">
-                    <label><?php _e('Тип', 'foto-kniga-calc'); ?></label>
-                    <select name="fk_field_type[<?php echo $index; ?>]" class="fk-field-type">
+                <div class="ag-field-setting">
+                    <label><?php _e('Тип', 'ag-calc'); ?></label>
+                    <select name="ag_field_type[<?php echo $index; ?>]" class="ag-field-type">
                         <?php foreach ($registry as $key => $field_type): ?>
                             <option value="<?php echo esc_attr($key); ?>" <?php selected($type, $key); ?>>
                                 <?php echo esc_html($field_type['label']); ?>
@@ -236,7 +236,7 @@ class FK_Admin_UI
                     </select>
                 </div>
 
-                <div class="fk-field-type-settings" data-type="<?php echo esc_attr($type); ?>">
+                <div class="ag-field-type-settings" data-type="<?php echo esc_attr($type); ?>">
                     <?php $this->render_field_type_settings($index, $field, $type); ?>
                 </div>
             </div>
@@ -251,19 +251,19 @@ class FK_Admin_UI
     {
         if ($type === 'number' || $type === 'range') {
             ?>
-            <div class="fk-field-setting">
-                <label><?php _e('Минимум', 'foto-kniga-calc'); ?></label>
-                <input type="number" name="fk_field_config[<?php echo $index; ?>][min]"
+            <div class="ag-field-setting">
+                <label><?php _e('Минимум', 'ag-calc'); ?></label>
+                <input type="number" name="ag_field_config[<?php echo $index; ?>][min]"
                     value="<?php echo esc_attr($field['config']['min'] ?? 1); ?>" class="small-text">
             </div>
-            <div class="fk-field-setting">
-                <label><?php _e('Максимум', 'foto-kniga-calc'); ?></label>
-                <input type="number" name="fk_field_config[<?php echo $index; ?>][max]"
+            <div class="ag-field-setting">
+                <label><?php _e('Максимум', 'ag-calc'); ?></label>
+                <input type="number" name="ag_field_config[<?php echo $index; ?>][max]"
                     value="<?php echo esc_attr($field['config']['max'] ?? 100); ?>" class="small-text">
             </div>
-            <div class="fk-field-setting">
-                <label><?php _e('Шаг', 'foto-kniga-calc'); ?></label>
-                <input type="number" name="fk_field_config[<?php echo $index; ?>][step]"
+            <div class="ag-field-setting">
+                <label><?php _e('Шаг', 'ag-calc'); ?></label>
+                <input type="number" name="ag_field_config[<?php echo $index; ?>][step]"
                     value="<?php echo esc_attr($field['config']['step'] ?? 1); ?>" class="small-text">
             </div>
             <?php
@@ -271,9 +271,9 @@ class FK_Admin_UI
 
         if ($type === 'hidden_number') {
             ?>
-            <div class="fk-field-setting">
-                <label><?php _e('Значение', 'foto-kniga-calc'); ?></label>
-                <input type="number" name="fk_field_config[<?php echo $index; ?>][value]"
+            <div class="ag-field-setting">
+                <label><?php _e('Значение', 'ag-calc'); ?></label>
+                <input type="number" name="ag_field_config[<?php echo $index; ?>][value]"
                     value="<?php echo esc_attr($field['config']['value'] ?? 0); ?>" class="small-text" step="0.01">
             </div>
             <?php
@@ -281,22 +281,22 @@ class FK_Admin_UI
 
         if ($type === 'select' || $type === 'radio') {
             ?>
-            <div class="fk-field-setting fk-pricing-table-setting">
-                <label><?php _e('Значения и цены', 'foto-kniga-calc'); ?></label>
-                <div class="fk-pricing-table" data-field-index="<?php echo $index; ?>">
+            <div class="ag-field-setting ag-pricing-table-setting">
+                <label><?php _e('Значения и цены', 'ag-calc'); ?></label>
+                <div class="ag-pricing-table" data-field-index="<?php echo $index; ?>">
                     <?php
                     $options = $field['config']['options'] ?? [];
                     if (!empty($options)):
                         foreach ($options as $opt_index => $option):
                             ?>
-                            <div class="fk-pricing-row">
-                                <input type="text" name="fk_field_options[<?php echo $index; ?>][<?php echo $opt_index; ?>][value]"
+                            <div class="ag-pricing-row">
+                                <input type="text" name="ag_field_options[<?php echo $index; ?>][<?php echo $opt_index; ?>][value]"
                                     value="<?php echo esc_attr($option['value'] ?? ''); ?>"
-                                    placeholder="<?php _e('Значение', 'foto-kniga-calc'); ?>" class="">
-                                <input type="number" name="fk_field_options[<?php echo $index; ?>][<?php echo $opt_index; ?>][price]"
+                                    placeholder="<?php _e('Значение', 'ag-calc'); ?>" class="">
+                                <input type="number" name="ag_field_options[<?php echo $index; ?>][<?php echo $opt_index; ?>][price]"
                                     value="<?php echo esc_attr($option['price'] ?? 0); ?>"
-                                    placeholder="<?php _e('Цена', 'foto-kniga-calc'); ?>" class="small-text">
-                                <button type="button" class="fk-remove-pricing-row button-link-delete">
+                                    placeholder="<?php _e('Цена', 'ag-calc'); ?>" class="small-text">
+                                <button type="button" class="ag-remove-pricing-row button-link-delete">
                                     <span class="dashicons dashicons-trash"></span>
                                 </button>
                             </div>
@@ -304,12 +304,12 @@ class FK_Admin_UI
                         endforeach;
                     else:
                         ?>
-                        <div class="fk-pricing-row">
-                            <input type="text" name="fk_field_options[<?php echo $index; ?>][0][value]"
-                                placeholder="<?php _e('Значение', 'foto-kniga-calc'); ?>" class="regular-text">
-                            <input type="number" name="fk_field_options[<?php echo $index; ?>][0][price]"
-                                placeholder="<?php _e('Цена', 'foto-kniga-calc'); ?>" class="small-text" value="0">
-                            <button type="button" class="fk-remove-pricing-row button-link-delete">
+                        <div class="ag-pricing-row">
+                            <input type="text" name="ag_field_options[<?php echo $index; ?>][0][value]"
+                                placeholder="<?php _e('Значение', 'ag-calc'); ?>" class="regular-text">
+                            <input type="number" name="ag_field_options[<?php echo $index; ?>][0][price]"
+                                placeholder="<?php _e('Цена', 'ag-calc'); ?>" class="small-text" value="0">
+                            <button type="button" class="ag-remove-pricing-row button-link-delete">
                                 <span class="dashicons dashicons-trash"></span>
                             </button>
                         </div>
@@ -317,8 +317,8 @@ class FK_Admin_UI
                     endif;
                     ?>
                 </div>
-                <button type="button" class="fk-add-pricing-row button button-secondary">
-                    <span class="dashicons dashicons-plus-alt"></span> <?php _e('Добавить значение', 'foto-kniga-calc'); ?>
+                <button type="button" class="ag-add-pricing-row button button-secondary">
+                    <span class="dashicons dashicons-plus-alt"></span> <?php _e('Добавить значение', 'ag-calc'); ?>
                 </button>
             </div>
             <?php
@@ -326,9 +326,9 @@ class FK_Admin_UI
 
         if ($type === 'checkbox') {
             ?>
-            <div class="fk-field-setting">
-                <label><?php _e('Цена если отмечено', 'foto-kniga-calc'); ?></label>
-                <input type="number" name="fk_field_config[<?php echo $index; ?>][price]"
+            <div class="ag-field-setting">
+                <label><?php _e('Цена если отмечено', 'ag-calc'); ?></label>
+                <input type="number" name="ag_field_config[<?php echo $index; ?>][price]"
                     value="<?php echo esc_attr($field['config']['price'] ?? 0); ?>" class="small-text">
             </div>
             <?php
@@ -340,39 +340,39 @@ class FK_Admin_UI
      */
     public function render_product_formula($post)
     {
-        $formula = get_post_meta($post->ID, '_fk_formula', true);
+        $formula = get_post_meta($post->ID, '_ag_formula', true);
         $formula = wp_parse_args($formula, [
             'expression' => '',
             'variables' => []
         ]);
 
-        $fields = get_post_meta($post->ID, '_fk_fields', true);
+        $fields = get_post_meta($post->ID, '_ag_fields', true);
         $fields = is_array($fields) ? $fields : [];
         ?>
-        <div class="fk-formula-builder">
-            <div class="fk-formula-variables">
-                <label><?php _e('Доступные переменные:', 'foto-kniga-calc'); ?></label>
-                <div class="fk-variables-list">
+        <div class="ag-formula-builder">
+            <div class="ag-formula-variables">
+                <label><?php _e('Доступные переменные:', 'ag-calc'); ?></label>
+                <div class="ag-variables-list">
                     <?php if (!empty($fields)): ?>
                         <?php foreach ($fields as $field): ?>
-                            <span class="fk-variable-tag" data-var="<?php echo esc_attr($field['key'] ?? ''); ?>">
+                            <span class="ag-variable-tag" data-var="<?php echo esc_attr($field['key'] ?? ''); ?>">
                                 {{<?php echo esc_html($field['key'] ?? ''); ?>}}
                             </span>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <p class="description"><?php _e('Сначала добавьте поля', 'foto-kniga-calc'); ?></p>
+                        <p class="description"><?php _e('Сначала добавьте поля', 'ag-calc'); ?></p>
                     <?php endif; ?>
                 </div>
             </div>
 
-            <div class="fk-formula-operators">
-                <label><?php _e('Операции:', 'foto-kniga-calc'); ?></label>
-                <div class="fk-operators-list">
+            <div class="ag-formula-operators">
+                <label><?php _e('Операции:', 'ag-calc'); ?></label>
+                <div class="ag-operators-list">
                     <?php
-                    $operators = FK_Formula_Engine::get_allowed_operators();
+                    $operators = AG_Formula_Engine::get_allowed_operators();
                     foreach ($operators as $op => $desc):
                         ?>
-                        <span class="fk-operator-tag" data-op="<?php echo esc_attr($op); ?>">
+                        <span class="ag-operator-tag" data-op="<?php echo esc_attr($op); ?>">
                             <?php echo esc_html($op); ?>
                         </span>
                         <?php
@@ -381,38 +381,38 @@ class FK_Admin_UI
                 </div>
             </div>
 
-            <div class="fk-formula-input-wrapper">
-                <label for="fk_formula_expression"><?php _e('Формула', 'foto-kniga-calc'); ?></label>
-                <textarea name="fk_formula[expression]" id="fk_formula_expression" class="large-text code" rows="4"
+            <div class="ag-formula-input-wrapper">
+                <label for="ag_formula_expression"><?php _e('Формула', 'ag-calc'); ?></label>
+                <textarea name="ag_formula[expression]" id="ag_formula_expression" class="large-text code" rows="4"
                     placeholder="((base_price * pages) + cover_price) * quantity"><?php
                     echo esc_textarea(html_entity_decode($formula['expression'], ENT_QUOTES | ENT_HTML5, 'UTF-8'));
                     ?></textarea>
             </div>
 
-            <div class="fk-formula-test">
-                <button type="button" id="fk-test-formula" class="button button-secondary">
+            <div class="ag-formula-test">
+                <button type="button" id="ag-test-formula" class="button button-secondary">
                     <span class="dashicons dashicons-controls-play"></span>
-                    <?php _e('Проверить расчет', 'foto-kniga-calc'); ?>
+                    <?php _e('Проверить расчет', 'ag-calc'); ?>
                 </button>
-                <div id="fk-formula-test-result" class="fk-test-result"></div>
+                <div id="ag-formula-test-result" class="ag-test-result"></div>
             </div>
 
             <p class="description">
-                <?php _e('Используйте ключи полей как переменные. Пример: {{quantity}} * {{price}}', 'foto-kniga-calc'); ?>
+                <?php _e('Используйте ключи полей как переменные. Пример: {{quantity}} * {{price}}', 'ag-calc'); ?>
             </p>
 
             <div style="margin-top: 15px; padding: 12px; background: #f0f0f1; border-left: 4px solid #0073aa;">
-                <strong><?php _e('Пользовательские переменные:', 'foto-kniga-calc'); ?></strong><br>
-                <?php _e('Можно определять свои переменные для сложных расчётов:', 'foto-kniga-calc'); ?><br>
+                <strong><?php _e('Пользовательские переменные:', 'ag-calc'); ?></strong><br>
+                <?php _e('Можно определять свои переменные для сложных расчётов:', 'ag-calc'); ?><br>
                 <code style="display: block; margin: 8px 0; padding: 8px; background: #fff; border: 1px solid #ddd;">
-        base_price = if({{kolvo}} &gt;= 100, 120, 150);<br>
-        {{kolvo}} * ({{base_price}} + {{razvorot}})
-                        </code>
-                <?php _e('Каждая переменная с новой строки, основная формула — последней.', 'foto-kniga-calc'); ?>
+                                base_price = if({{kolvo}} &gt;= 100, 120, 150);<br>
+                                {{kolvo}} * ({{base_price}} + {{razvorot}})
+                                                </code>
+                <?php _e('Каждая переменная с новой строки, основная формула — последней.', 'ag-calc'); ?>
             </div>
         </div>
 
-        <input type="hidden" name="fk_formula_data" id="fk_formula_data" value='<?php echo esc_attr(json_encode($formula)); ?>'>
+        <input type="hidden" name="ag_formula_data" id="ag_formula_data" value='<?php echo esc_attr(json_encode($formula)); ?>'>
         <?php
     }
 
@@ -426,32 +426,32 @@ class FK_Admin_UI
         if (!current_user_can('edit_post', $post_id))
             return;
         if (
-            !isset($_POST['fk_product_settings_nonce']) ||
-            !wp_verify_nonce($_POST['fk_product_settings_nonce'], 'fk_product_settings')
+            !isset($_POST['ag_product_settings_nonce']) ||
+            !wp_verify_nonce($_POST['ag_product_settings_nonce'], 'ag_product_settings')
         )
             return;
 
         // Сохранение настроек
-        if (isset($_POST['fk_slug'])) {
-            update_post_meta($post_id, '_fk_slug', sanitize_text_field($_POST['fk_slug']));
+        if (isset($_POST['ag_slug'])) {
+            update_post_meta($post_id, '_ag_slug', sanitize_text_field($_POST['ag_slug']));
         }
 
         // Сохранение отображения
-        if (isset($_POST['fk_display'])) {
+        if (isset($_POST['ag_display'])) {
             $display = [
-                'tab_icon' => sanitize_text_field($_POST['fk_display']['tab_icon'] ?? 'dashicons-calculator'),
-                'tab_title' => sanitize_text_field($_POST['fk_display']['tab_title'] ?? ''),
-                'menu_order' => intval($_POST['fk_display']['menu_order'] ?? 0)
+                'tab_icon' => sanitize_text_field($_POST['ag_display']['tab_icon'] ?? 'dashicons-calculator'),
+                'tab_title' => sanitize_text_field($_POST['ag_display']['tab_title'] ?? ''),
+                'menu_order' => intval($_POST['ag_display']['menu_order'] ?? 0)
             ];
-            update_post_meta($post_id, '_fk_display', $display);
+            update_post_meta($post_id, '_ag_display', $display);
         }
 
         // Сохранение полей
-        if (isset($_POST['fk_field_key']) && is_array($_POST['fk_field_key']) && !empty($_POST['fk_field_key'])) {
+        if (isset($_POST['ag_field_key']) && is_array($_POST['ag_field_key']) && !empty($_POST['ag_field_key'])) {
             $fields = [];
-            $keys = $_POST['fk_field_key'];
-            $labels = $_POST['fk_field_label'] ?? [];
-            $types = $_POST['fk_field_type'] ?? [];
+            $keys = $_POST['ag_field_key'];
+            $labels = $_POST['ag_field_label'] ?? [];
+            $types = $_POST['ag_field_type'] ?? [];
 
             foreach ($keys as $index => $key) {
                 $field = [
@@ -464,23 +464,23 @@ class FK_Admin_UI
                 // Конфигурация для number/range
                 if (in_array($field['type'], ['number', 'range'])) {
                     $field['config'] = [
-                        'min' => floatval($_POST['fk_field_config'][$index]['min'] ?? 1),
-                        'max' => floatval($_POST['fk_field_config'][$index]['max'] ?? 100),
-                        'step' => floatval($_POST['fk_field_config'][$index]['step'] ?? 1)
+                        'min' => floatval($_POST['ag_field_config'][$index]['min'] ?? 1),
+                        'max' => floatval($_POST['ag_field_config'][$index]['max'] ?? 100),
+                        'step' => floatval($_POST['ag_field_config'][$index]['step'] ?? 1)
                     ];
                 }
 
                 // Конфигурация для hidden_number — только значение
                 if ($field['type'] === 'hidden_number') {
                     $field['config'] = [
-                        'value' => floatval($_POST['fk_field_config'][$index]['value'] ?? 0)
+                        'value' => floatval($_POST['ag_field_config'][$index]['value'] ?? 0)
                     ];
                 }
 
                 // Опции для select/radio
-                if (in_array($field['type'], ['select', 'radio']) && isset($_POST['fk_field_options'][$index])) {
+                if (in_array($field['type'], ['select', 'radio']) && isset($_POST['ag_field_options'][$index])) {
                     $options = [];
-                    foreach ($_POST['fk_field_options'][$index] as $opt) {
+                    foreach ($_POST['ag_field_options'][$index] as $opt) {
                         $options[] = [
                             'value' => sanitize_text_field($opt['value'] ?? ''),
                             'price' => floatval($opt['price'] ?? 0)
@@ -491,25 +491,25 @@ class FK_Admin_UI
 
                 // Цена для checkbox
                 if ($field['type'] === 'checkbox') {
-                    $field['config']['price'] = floatval($_POST['fk_field_config'][$index]['price'] ?? 0);
+                    $field['config']['price'] = floatval($_POST['ag_field_config'][$index]['price'] ?? 0);
                 }
 
                 $fields[] = $field;
             }
 
-            update_post_meta($post_id, '_fk_fields', $fields);
+            update_post_meta($post_id, '_ag_fields', $fields);
         } else {
             // Если полей нет - удаляем мета
-            delete_post_meta($post_id, '_fk_fields');
+            delete_post_meta($post_id, '_ag_fields');
         }
 
         // Сохранение формулы
-        if (isset($_POST['fk_formula'])) {
+        if (isset($_POST['ag_formula'])) {
             $formula = [
-                'expression' => sanitize_textarea_field($_POST['fk_formula']['expression'] ?? ''),
+                'expression' => sanitize_textarea_field($_POST['ag_formula']['expression'] ?? ''),
                 'variables' => []
             ];
-            update_post_meta($post_id, '_fk_formula', $formula);
+            update_post_meta($post_id, '_ag_formula', $formula);
         }
     }
 
@@ -518,10 +518,10 @@ class FK_Admin_UI
      */
     public function ajax_test_formula()
     {
-        check_ajax_referer('fk_admin_nonce', 'nonce');
+        check_ajax_referer('ag_admin_nonce', 'nonce');
 
         if (!current_user_can('edit_posts')) {
-            wp_send_json_error(['message' => __('Нет прав', 'foto-kniga-calc')]);
+            wp_send_json_error(['message' => __('Нет прав', 'ag-calc')]);
         }
 
         $expression = sanitize_text_field($_POST['expression'] ?? '');
@@ -529,7 +529,7 @@ class FK_Admin_UI
 
         // Получаем поля продукта для корректной обработки
         $post_id = intval($_POST['post_id'] ?? 0);
-        $fields = $post_id ? get_post_meta($post_id, '_fk_fields', true) : [];
+        $fields = $post_id ? get_post_meta($post_id, '_ag_fields', true) : [];
         $fields = is_array($fields) ? $fields : [];
 
         // Преобразуем тестовые данные так же, как в REST API
@@ -573,13 +573,13 @@ class FK_Admin_UI
         }
 
         $field_keys = array_keys($processed_variables);
-        $validation = FK_Formula_Engine::validate_formula($expression, $field_keys);
+        $validation = AG_Formula_Engine::validate_formula($expression, $field_keys);
 
         if (!$validation['valid']) {
             wp_send_json_error(['error' => implode(', ', $validation['errors'])]);
         }
 
-        $result = FK_Formula_Engine::calculate($expression, $processed_variables);
+        $result = AG_Formula_Engine::calculate($expression, $processed_variables);
 
         if ($result['success']) {
             wp_send_json_success(['price' => $result['price']]);
