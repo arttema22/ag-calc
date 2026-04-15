@@ -28,9 +28,9 @@ $formula = $config['formula'] ?? [];
         <span class="ag-total-price" data-price="0">0 ₽</span>
 
         <div class="ag-loading-spinner" style="display: none;">
-    <span class="spinner-border spinner-border-sm" role="status"></span>
-    <span class="sr-only">Загрузка...</span>
-</div>
+            <span class="ag-spinner-icon"></span>
+            <span class="sr-only">Загрузка...</span>
+        </div>
 
     </div>
     
@@ -38,7 +38,7 @@ $formula = $config['formula'] ?? [];
 
     <!-- Кнопка заказа -->
     <div class="ag-order-button-wrapper">
-        <button type="button" class="btn btn-primary ag-order-btn" disabled>
+        <button type="button" class="ag-order-btn" disabled>
         Заказать
         </button>
     </div>

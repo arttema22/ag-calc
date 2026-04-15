@@ -21,8 +21,7 @@
                 this.onFieldChange.bind(this));
 
             // Переключение вкладок
-            $(document).on('shown.bs.tab', '.ag-tabs-nav a[data-toggle="tab"]',
-                this.onTabShown.bind(this));
+            $(document).on('click', '.ag-tabs-nav .ag-tab-link', this.onTabClick.bind(this));
 
             // Обновление значения слайдера
             $(document).on('input', '.ag-field-range', this.onRangeInput.bind(this));
@@ -131,13 +130,27 @@
         },
 
         /**
-         * Обработчик переключения вкладки
+         * Обработчик клика по вкладке
          */
-        onTabShown: function (e) {
-            const $tab = $(e.target);
-            const $pane = $($tab.attr('href'));
-            const $calculator = $pane.find('.ag-product-calculator');
+        onTabClick: function (e) {
+            e.preventDefault();
 
+            const $link = $(e.currentTarget);
+            const tabId = $link.data('tab-target');
+
+            if (!tabId) return;
+
+            // Убираем активные классы у всех вкладок
+            $('.ag-tabs-nav .ag-tab-link').removeClass('active');
+            $('.ag-tabs-content .ag-tab-pane').removeClass('active');
+
+            // Делаем текущую вкладку активной
+            $link.addClass('active');
+            const $pane = $('#' + tabId);
+            $pane.addClass('active');
+
+            // Инициализируем калькулятор, если ещё не инициализирован
+            const $calculator = $pane.find('.ag-product-calculator');
             if ($calculator.length && !$calculator.data('initialized')) {
                 this.initCalculator($calculator);
                 $calculator.data('initialized', true);
