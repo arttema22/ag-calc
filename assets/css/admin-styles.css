@@ -1,0 +1,191 @@
+#fk_product_settings .form-table th {
+    width: 200px;
+}
+
+#fk-fields-container {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    padding: 15px;
+    margin-top: 10px;
+}
+
+.fk-fields-list {
+    margin-bottom: 15px;
+}
+
+.fk-field-row {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    padding: 15px;
+    border-radius: 3px;
+}
+
+.fk-field-row.ui-sortable-helper {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.fk-field-placeholder {
+    background: #f0f0f1;
+    border: 2px dashed #bbb;
+    height: 100px;
+    margin-bottom: 10px;
+}
+
+.fk-field-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.fk-field-handle {
+    cursor: move;
+    color: #999;
+    margin-right: 10px;
+}
+
+.fk-field-type-badge {
+    background: #0073aa;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    margin-left: 10px;
+}
+
+.fk-remove-field {
+    margin-left: auto;
+    color: #a00;
+}
+
+.fk-field-type-settings {
+    display: flex;
+}
+
+.fk-field-settings {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.fk-field-setting {
+    display: flex;
+    flex-direction: column;
+}
+
+.fk-field-setting label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 13px;
+}
+
+.fk-pricing-table {
+    margin: 10px 0;
+}
+
+.fk-pricing-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.fk-pricing-row input[type="text"] {
+    flex: 2;
+}
+
+.fk-pricing-row input[type="number"] {
+    flex: 1;
+}
+
+.fk-formula-builder {
+    background: #fff;
+    padding: 15px;
+}
+
+.fk-formula-variables,
+.fk-formula-operators {
+    margin-bottom: 15px;
+}
+
+.fk-variables-list,
+.fk-operators-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 8px;
+}
+
+.fk-variable-tag,
+.fk-operator-tag {
+    background: #e5f5fa;
+    border: 1px solid #0073aa;
+    color: #0073aa;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.fk-variable-tag:hover,
+.fk-operator-tag:hover {
+    background: #0073aa;
+    color: #fff;
+}
+
+#fk_formula_expression {
+    font-family: "Consolas", "Monaco", monospace;
+    font-size: 14px;
+}
+
+.fk-formula-test {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.fk-test-result {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 3px;
+}
+
+.fk-test-result .success {
+    color: #46b450;
+    background: #ecf7ed;
+    padding: 8px 12px;
+    display: inline-block;
+}
+
+.fk-test-result .error {
+    color: #dc3232;
+    background: #fbeaea;
+    padding: 8px 12px;
+    display: inline-block;
+}
+
+.fk-add-field-wrapper {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+@media screen and (max-width: 782px) {
+    .fk-field-settings {
+        grid-template-columns: 1fr;
+    }
+
+    .fk-pricing-row {
+        flex-wrap: wrap;
+    }
+
+    .fk-pricing-row input[type="text"],
+    .fk-pricing-row input[type="number"] {
+        flex: 1 1 100%;
+    }
+}
