@@ -1,10 +1,10 @@
 <?php
 /**
- * Plugin Name: Foto Kniga Calculator
+ * Plugin Name: AG Calculator
  * Description: Гибкий калькулятор стоимости продукции с настройкой в админке
  * Version: 1.0.0
  * Author: Artem Gusev
- * Text Domain: foto-kniga-calc
+ * Text Domain: ag-calc
  */
 
 if (!defined('ABSPATH'))
